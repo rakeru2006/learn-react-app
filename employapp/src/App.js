@@ -1,3 +1,17 @@
+import React, {Component} from 'react'
+
+class App extends Component {
+  render(){
+    return(
+      <div>Hello Word</div>
+      )
+    
+  }
+}
+
+export default App;
+
+/*
 import logo from './logo.svg';
 import './App.css';
 
@@ -23,3 +37,4 @@ function App() {
 }
 
 export default App;
+*/

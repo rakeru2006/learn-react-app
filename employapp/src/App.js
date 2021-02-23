@@ -13,7 +13,7 @@ class App extends Component {
   }
 
   componentDidMount(){
-    fetch("https://randomuser.me/api/")
+    fetch("https://randomuser.me/api/?results=50")
     .then((response) => response.json())
     .then((response) => {
       this.setState({
@@ -37,6 +37,8 @@ class App extends Component {
         <div className="container">
 
         {items.map(item => (
+
+         
           <img src={item.picture.medium } alt = {item.name.first}/>
 
         ))}

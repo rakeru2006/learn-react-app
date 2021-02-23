@@ -34,7 +34,14 @@ class App extends Component {
       else{
 
       return(
-        <div>Data</div>
+        <div className="container">
+
+        {items.map(item => (
+          <img src={item.picture.medium } alt = {item.name.first}/>
+
+        ))}
+
+        </div>
       ) 
       }
   }

@@ -1,6 +1,28 @@
 import React, {Component} from 'react'
 
+
+
 class App extends Component {
+  Constructor(props){
+    super(props)
+    this.state ={
+      items:[],
+      loading:false
+    }
+  }
+
+  componentDidMount(){
+    fetch("https://randomuser.me/api/")
+    .then((response)) => response.json())
+    .then((response)) => {
+      this.setState({
+        items:response.results,
+        loading:true
+      })
+    }
+
+  }
+
   render(){
     return(
       <div>Hello Word</div>

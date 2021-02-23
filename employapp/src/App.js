@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
+import { unstable_renderSubtreeIntoContainer } from 'react-dom'
 
 
 
 class App extends Component {
-  Constructor(props){
+  constructor(props){
     super(props)
     this.state ={
       items:[],
@@ -13,21 +14,29 @@ class App extends Component {
 
   componentDidMount(){
     fetch("https://randomuser.me/api/")
-    .then((response)) => response.json())
-    .then((response)) => {
+    .then((response) => response.json())
+    .then((response) => {
       this.setState({
         items:response.results,
         loading:true
       })
-    }
-
+    })
   }
 
   render(){
-    return(
-      <div>Hello Word</div>
-      )
-    
+      var {items,loading} = this.state
+
+      if(!loading){
+        return(
+        <div>Loading....</div>
+        )
+      }
+      else{
+
+      return(
+        <div>Data</div>
+      ) 
+      }
   }
 }
 

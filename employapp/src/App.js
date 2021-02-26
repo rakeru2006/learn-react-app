@@ -62,12 +62,14 @@ class App extends Component {
       <th>Username</th>
     </tr>
   </thead>
-  <tbody>
+  
     <tr>
       <td>1</td>
       <td> item.name.first</td>
-      <td>Otto</td>
-      <td>@mdo</td>
+      <td>item.name.last</td>
+      <td>@mdo  {items.map(item => (        
+        <img src={item.picture.medium } alt = {item.name.first}/>
+        ))}</td>
     </tr>
     <tr>
       <td>2</td>
@@ -80,19 +82,12 @@ class App extends Component {
       <td colSpan="2">Larry the Bird</td>
       <td>@twitter</td>
     </tr>
-  </tbody>
+  
 </Table>
 
 
 
-        {items.map(item => (
-        
-         
-        <img src={item.picture.medium } alt = {item.name.first}/>
-
-
-        
-        ))}
+      
 
         </div>
       ) 

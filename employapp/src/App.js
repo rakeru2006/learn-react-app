@@ -18,37 +18,41 @@ class App extends Component {
   }
 
   componentDidMount(){
-    fetch("https://randomuser.me/api/?results=50")
+    fetch("https://randomuser.me/api/?results=5")
     .then((response) => response.json())
     .then((response) => {
       this.setState({
         items:response.results,
         loading:true,
-      
       })
+      
     })
   }
 
   render(){
       var {items,loading} = this.state
 
+
       if(!loading){
         return(
         <div>Loading....</div>
+
         )
       }
       else{
 
-      return(
+        console.log("resultado api:");
+        console.log(this.state.items[1].name);
+        //console.log(this.state.items);
 
-    
+      return(
 
         <div className="container">
         <Jumbotron fluid>
         
             <h1>Company Directory</h1>
             <p>
-              Render images of employ 
+              Render information about of employ 
             </p>
        
         </Jumbotron>
@@ -56,34 +60,39 @@ class App extends Component {
         <Table striped bordered hover>
   <thead>
     <tr>
-      <th>#</th>
       <th>First Name</th>
       <th>Last Name</th>
-      <th>Username</th>
+      <th>Employ Picture</th>
     </tr>
   </thead>
   
-    <tr>
-      <td>1</td>
-      <td> item.name.first</td>
-      <td>item.name.last</td>
-      <td>@mdo  {items.map(item => (        
-        <img src={item.picture.medium } alt = {item.name.first}/>
-        ))}</td>
+  <tr>
+      {items.map((item) => (
+      <td>
+      <p key={item.name.first}>{item.name.first}</p>
+      </td>
+      ))} 
+  </tr>
+  
+  <tr>
+      {items.map((item) => (
+      <td>
+      <p key={item.name.last}>{item.name.last}</p>
+      </td>
+      ))} 
+  </tr>
+  <tr>
+    {items.map(item => (        
+      <td>
+    <img src={item.picture.medium } alt = {item.name.first}/>
+    </td>
+    ))}
     </tr>
-    <tr>
-      <td>2</td>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td colSpan="2">Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
+    
   
 </Table>
+
+
 
 
 
@@ -94,6 +103,91 @@ class App extends Component {
       }
   }
 }
+
+const Header = () => {
+  return (
+    <header>
+      <h1 className="text-center">Employee Directory</h1>
+      <p className="text-center">
+        Click on column headers to filter by heading or use the search box to narrow
+        your results.
+      </p>
+    </header>
+  );
+};
+
+
+const SearchBar = (props) => {
+  // Setting the component's initial state
+
+  return (
+    <nav className="navbar navbar-light bg-light justify-content-center">
+      <form className="form-inline m-2" onSubmit={props.handleFormSubmit}>
+        <input
+          className="form-control"
+          value={props.value}
+          name="search"
+          onChange={props.handleInputChange}
+          type="search"
+          placeholder="Search"
+        />
+      </form>
+    </nav>
+  );
+};
+
+const EmployeeTable = (props) => {
+  return (
+    <table className="table table-striped table-sortable text-center">
+      <thead>
+        <tr>
+          <th scope="col">Image</th>
+          <th scope="col" data-field="name" data-sortable="true">
+            <span onClick={() => props.sortBy("name", "last", "first")}>
+              Name
+            </span>
+          </th>
+          <th scope="col">
+            <span onClick={() => props.sortBy("phone")}>Phone</span>
+          </th>
+          <th scope="col">
+            <span onClick={() => props.sortBy("email")}>Email</span>
+          </th>
+          <th scope="col">
+            <span onClick={() => props.sortBy("dob", "date")}>DOB</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.state.filteredEmployees.map((employee) => {
+          const { first, last } = employee.name;
+          const fullName = `${first} ${last}`;
+
+          // Format date
+          const dob = props.formatDate(employee.dob.date);
+
+          return (
+            <tr key={employee.login.uuid}>
+              <td>
+                <img src={employee.picture.thumbnail} alt={fullName} />
+              </td>
+              <td className="align-middle">{fullName}</td>
+              <td className="align-middle">
+              <a href={`tel:+1${employee.phone}`}>{employee.phone}</a></td>
+              <td className="align-middle email">
+                <a href={`mailto:${employee.email}`}>{employee.email}</a>
+              </td>
+              <td className="align-middle">{dob}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+};
+
+
+
 
 export default App;
 

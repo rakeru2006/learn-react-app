@@ -66,29 +66,20 @@ class App extends Component {
     </tr>
   </thead>
   
+  {items.map((item) => (
+
   <tr>
-      {items.map((item) => (
-      <td>
-      <p key={item.name.first}>{item.name.first}</p>
-      </td>
-      ))} 
-  </tr>
-  
-  <tr>
-      {items.map((item) => (
-      <td>
-      <p key={item.name.last}>{item.name.last}</p>
-      </td>
-      ))} 
-  </tr>
-  <tr>
-    {items.map(item => (        
-      <td>
+    <td>
+    <p key={item.name.first}>{item.name.first}</p>
+    </td>
+    <td>
+    <p key={item.name.last}>{item.name.last}</p>
+    </td>
+    <td>
     <img src={item.picture.medium } alt = {item.name.first}/>
     </td>
-    ))}
     </tr>
-    
+  ))} 
   
 </Table>
 

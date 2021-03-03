@@ -1,184 +1,156 @@
-import React, {Component} from 'react'
-import { unstable_renderSubtreeIntoContainer } from 'react-dom'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { Component } from "react";
+import axios from "axios";
 
 
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
+
 
 
 class App extends Component {
-  constructor(props){
-    super(props)
-    this.state ={
-      items:[],
-      loading:false
-    }
-  }
+  constructor(props) {
+    super(props);
 
-  componentDidMount(){
-    fetch("https://randomuser.me/api/?results=5")
-    .then((response) => response.json())
-    .then((response) => {
-      this.setState({
-        items:response.results,
-        loading:true,
+    this.state = { 
+      users: [], 
+      searchTerm: '', 
+      alphabetical: 'az'
+     };
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+data
+  componentDidMount() {
+    var radioGender = "male";
+      var selectedNationality = "AU"
+
+      var url = "https://randomuser.me/api/?results=10";
+      
+    
+    axios
+      .get(url)
+      .then(response => {
+        console.log(response.data.results);
+        this.setState({
+           users: response.data.results });
       })
-      
-    })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
-  render(){
-      var {items,loading} = this.state
+  handleChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
 
 
-      if(!loading){
-        return(
-        <div>Loading....</div>
+    });
+  }
 
-        )
-      }
-      else{
+  render() {
+    let sortedUsers;
 
-        console.log("resultado api:");
-        console.log(this.state.items[1].name);
-        //console.log(this.state.items);
+    if (this.state.alphabetical === "az") {
+      console.log("sort");
+      sortedUsers = this.state.users.sort((a, b) =>
+        a.name.first > b.name.first ? 1 : -1
+      );
+    } else {
+      sortedUsers = this.state.users.sort((a, b) =>
+        a.name.first < b.name.first ? 1 : -1
+      );
+    }
 
-      return(
+    let filteredUsers = sortedUsers;
 
-        <div className="container">
-        <Jumbotron fluid>
-        
-            <h1>Company Directory</h1>
-            <p>
-              Render information about of employ 
-            </p>
-       
-        </Jumbotron>
+    if (this.state.searchTerm)
+      filteredUsers = this.state.users.filter(u =>
+        u.name.first.startsWith(this.state.searchTerm)
+      );
 
-        <Table striped bordered hover>
-  <thead>
-    <tr>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Employ Picture</th>
-    </tr>
-  </thead>
-  
-  {items.map((item) => (
-
-  <tr>
-    <td>
-    <p key={item.name.first}>{item.name.first}</p>
-    </td>
-    <td>
-    <p key={item.name.last}>{item.name.last}</p>
-    </td>
-    <td>
-    <img src={item.picture.medium } alt = {item.name.first}/>
-    </td>
-    </tr>
-  ))} 
-  
-</Table>
-
-
-
-
-
+    const userNames = filteredUsers.map(u => {
+      return <User key={u.email} name={u.name.first} last={u.name.last} age={u.dob.age} email={u.email} photo={u.picture.medium} />;
       
+    }
+   
+    );
+    return (
 
+      <div className="container">
+      <Jumbotron fluid>
+      
+          <h1>Company Directory</h1>
+          <p>
+            Render information about of employ 
+          </p>
+    
+      </Jumbotron>
+      <div>
+        <form onSubmit={this.handleSubmit}>
+          <label>
+            Search for user:
+            <input
+              type="text"
+              name="searchTerm"
+              value={this.state.searchTerm}
+              onChange={this.handleChange}
+            />
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
+        <select
+          name="alphabetical"
+          value={this.state.alphabetical}
+          onChange={this.handleChange}
+        >
+          <option selected value="az">
+            A to Z
+          </option>
+          <option value="za">Z to A</option>
+        </select>
+
+        {userNames}
         </div>
-      ) 
-      }
+
+        
+      </div>
+    );
   }
 }
 
-const Header = () => {
-  return (
-    <header>
-      <h1 className="text-center">Employee Directory</h1>
-      <p className="text-center">
-        Click on column headers to filter by heading or use the search box to narrow
-        your results.
-      </p>
-    </header>
-  );
-};
+class User extends Component {
+  render() {
+    return (
+      
 
+      <div>
+          <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Age</th>
+            <th>Email</th>
+            <th> Picture</th>
+          </tr>
+        </thead>
 
-const SearchBar = (props) => {
-  // Setting the component's initial state
-
-  return (
-    <nav className="navbar navbar-light bg-light justify-content-center">
-      <form className="form-inline m-2" onSubmit={props.handleFormSubmit}>
-        <input
-          className="form-control"
-          value={props.value}
-          name="search"
-          onChange={props.handleInputChange}
-          type="search"
-          placeholder="Search"
-        />
-      </form>
-    </nav>
-  );
-};
-
-const EmployeeTable = (props) => {
-  return (
-    <table className="table table-striped table-sortable text-center">
-      <thead>
         <tr>
-          <th scope="col">Image</th>
-          <th scope="col" data-field="name" data-sortable="true">
-            <span onClick={() => props.sortBy("name", "last", "first")}>
-              Name
-            </span>
-          </th>
-          <th scope="col">
-            <span onClick={() => props.sortBy("phone")}>Phone</span>
-          </th>
-          <th scope="col">
-            <span onClick={() => props.sortBy("email")}>Email</span>
-          </th>
-          <th scope="col">
-            <span onClick={() => props.sortBy("dob", "date")}>DOB</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {props.state.filteredEmployees.map((employee) => {
-          const { first, last } = employee.name;
-          const fullName = `${first} ${last}`;
-
-          // Format date
-          const dob = props.formatDate(employee.dob.date);
-
-          return (
-            <tr key={employee.login.uuid}>
-              <td>
-                <img src={employee.picture.thumbnail} alt={fullName} />
-              </td>
-              <td className="align-middle">{fullName}</td>
-              <td className="align-middle">
-              <a href={`tel:+1${employee.phone}`}>{employee.phone}</a></td>
-              <td className="align-middle email">
-                <a href={`mailto:${employee.email}`}>{employee.email}</a>
-              </td>
-              <td className="align-middle">{dob}</td>
+            <td>{this.props.name}</td>
+            <td>{this.props.last}</td>
+            <td>{this.props.age}</td>
+            <td><a href="https://randomuser.me/api/?results=10">{this.props.email}</a></td>
+            <td><img src={this.props.photo} alt = {this.props.name}/></td>
+            
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-};
-
-
-
+            </Table>
+      </div>
+    );
+  }
+}
 
 export default App;
-
